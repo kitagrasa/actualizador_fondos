@@ -1,12 +1,12 @@
 {
   "last_ok": {
-    "timestamp": 1770864665407,
-    "iso": "2026-02-12T02:51:05.407Z",
+    "timestamp": 1770866130553,
+    "iso": "2026-02-12T03:15:30.553Z",
     "source": "ft"
   },
   "last_fundsquare": {
-    "timestamp": 1770864636927,
-    "iso": "2026-02-12T02:50:36.927Z",
+    "timestamp": 1770866114599,
+    "iso": "2026-02-12T03:15:14.599Z",
     "success_count": 7,
     "total_funds": 7,
     "results": [
@@ -55,8 +55,8 @@
     ]
   },
   "last_ft": {
-    "timestamp": 1770864665407,
-    "iso": "2026-02-12T02:51:05.407Z",
+    "timestamp": 1770866130553,
+    "iso": "2026-02-12T03:15:30.553Z",
     "success_count": 7,
     "total_funds": 7,
     "results": [
