@@ -1,12 +1,12 @@
 {
   "last_ok": {
-    "timestamp": 1770857294861,
-    "iso": "2026-02-12T00:48:14.861Z",
+    "timestamp": 1770857702782,
+    "iso": "2026-02-12T00:55:02.782Z",
     "source": "fundsquare"
   },
   "last_fundsquare": {
-    "timestamp": 1770857294861,
-    "iso": "2026-02-12T00:48:14.861Z",
+    "timestamp": 1770857702782,
+    "iso": "2026-02-12T00:55:02.782Z",
     "success_count": 7,
     "total_funds": 7,
     "results": [
