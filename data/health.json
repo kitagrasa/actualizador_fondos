@@ -1,20 +1,20 @@
 {
   "last_ok": {
-    "timestamp": 1770897518447,
-    "iso": "2026-02-12T11:58:38.447Z",
+    "timestamp": 1770908925668,
+    "iso": "2026-02-12T15:08:45.668Z",
     "source": "ft"
   },
   "last_fundsquare": {
-    "timestamp": 1770897501447,
-    "iso": "2026-02-12T11:58:21.447Z",
+    "timestamp": 1770908908517,
+    "iso": "2026-02-12T15:08:28.517Z",
     "success_count": 7,
     "total_funds": 7,
     "results": [
       {
         "isin": "LU0563745743",
         "success": true,
-        "date": "2026-02-10",
-        "close": 32.828
+        "date": "2026-02-11",
+        "close": 32.763
       },
       {
         "isin": "LU0524465548",
@@ -43,8 +43,8 @@
       {
         "isin": "LU0223332320",
         "success": true,
-        "date": "2026-02-10",
-        "close": 780.94
+        "date": "2026-02-11",
+        "close": 801.61
       },
       {
         "isin": "LU1832174962",
@@ -55,8 +55,8 @@
     ]
   },
   "last_ft": {
-    "timestamp": 1770897518447,
-    "iso": "2026-02-12T11:58:38.447Z",
+    "timestamp": 1770908925668,
+    "iso": "2026-02-12T15:08:45.668Z",
     "success_count": 7,
     "total_funds": 7,
     "results": [
@@ -69,26 +69,26 @@
       {
         "isin": "LU0524465548",
         "success": true,
-        "updated": 0,
-        "total": 21
+        "updated": 1,
+        "total": 22
       },
       {
         "isin": "LU1598720172",
         "success": true,
-        "updated": 0,
-        "total": 21
+        "updated": 1,
+        "total": 22
       },
       {
         "isin": "LU1372006947",
         "success": true,
-        "updated": 0,
-        "total": 21
+        "updated": 1,
+        "total": 22
       },
       {
         "isin": "LU1598719752",
         "success": true,
-        "updated": 0,
-        "total": 21
+        "updated": 1,
+        "total": 22
       },
       {
         "isin": "LU0223332320",
