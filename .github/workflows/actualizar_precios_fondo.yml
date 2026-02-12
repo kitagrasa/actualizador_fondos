@@ -2,7 +2,7 @@ name: Actualizar Precios Fondos
 
 on:
   schedule:
-    - cron: '0,19,38,57 * * * *'
+    - cron: '*/15 * * * *'
   workflow_dispatch:
 
 permissions:
