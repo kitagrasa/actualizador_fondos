@@ -60,13 +60,32 @@ function extractFTHistoricalRowsFromHTML(html) {
 }
 
 function stripTags(s) {
-  return String(s || '')
-    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
-    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
+  if (!s) return '';
+  
+  let text = String(s);
+  
+  // Eliminar scripts y styles completos (incluyendo contenido)
+  text = text.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, ' ');
+  text = text.replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, ' ');
+  
+  // Eliminar comentarios HTML
+  text = text.replace(/<!--[\s\S]*?-->/g, ' ');
+  
+  // Eliminar todas las etiquetas HTML
+  text = text.replace(/<\/?[^>]+(>|$)/g, ' ');
+  
+  // Decodificar entidades HTML comunes
+  text = text.replace(/&nbsp;/g, ' ');
+  text = text.replace(/&amp;/g, '&');
+  text = text.replace(/&lt;/g, '<');
+  text = text.replace(/&gt;/g, '>');
+  text = text.replace(/&quot;/g, '"');
+  text = text.replace(/&#39;/g, "'");
+  
+  // Normalizar espacios en blanco
+  text = text.replace(/\s+/g, ' ');
+  
+  return text.trim();
 }
 
 function parseFTDateToYMD(text) {
@@ -189,7 +208,6 @@ async function main() {
 
   console.log(`=== Financial Times Update Completed (${successCount}/${FUNDS.length} successful) ===\n`);
 
-  // Si ningún fondo se actualizó, fallar el workflow para notificar
   if (successCount === 0) {
     console.error('❌ CRITICAL: No funds were updated from Financial Times');
     process.exit(1);
