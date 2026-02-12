@@ -1,0 +1,58 @@
+{
+  "last_ok": {
+    "timestamp": 1770857294861,
+    "iso": "2026-02-12T00:48:14.861Z",
+    "source": "fundsquare"
+  },
+  "last_fundsquare": {
+    "timestamp": 1770857294861,
+    "iso": "2026-02-12T00:48:14.861Z",
+    "success_count": 7,
+    "total_funds": 7,
+    "results": [
+      {
+        "isin": "LU0563745743",
+        "success": true,
+        "date": "2026-02-10",
+        "close": 32.828
+      },
+      {
+        "isin": "LU0524465548",
+        "success": true,
+        "date": "2026-02-10",
+        "close": 534.14
+      },
+      {
+        "isin": "LU1598720172",
+        "success": true,
+        "date": "2026-02-10",
+        "close": 223.36
+      },
+      {
+        "isin": "LU1372006947",
+        "success": true,
+        "date": "2026-02-10",
+        "close": 36180.21
+      },
+      {
+        "isin": "LU1598719752",
+        "success": true,
+        "date": "2026-02-10",
+        "close": 167.19
+      },
+      {
+        "isin": "LU0223332320",
+        "success": true,
+        "date": "2026-02-10",
+        "close": 780.94
+      },
+      {
+        "isin": "LU1832174962",
+        "success": true,
+        "date": "2026-02-10",
+        "close": 239.93
+      }
+    ]
+  },
+  "last_ft": null
+}
