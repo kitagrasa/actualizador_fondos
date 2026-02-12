@@ -29,7 +29,7 @@ function generateJSONForFund(fund) {
   return out;
 }
 
-function main() {
+async function main() {
   console.log('=== JSON Generation Started ===');
   console.log(`Time: ${new Date().toISOString()}`);
 
