@@ -2,11 +2,9 @@ name: Actualizar Precios Fondos
 
 on:
   schedule:
-    # Fundsquare: cada 19 minutos
     - cron: '0,19,38,57 * * * *'
-    # Financial Times: cada hora en minuto 0
     - cron: '0 * * * *'
-  workflow_dispatch: # Permite ejecución manual
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -30,10 +28,7 @@ jobs:
         run: npm install
 
       - name: Update from Fundsquare
-        id: fundsquare_update
         run: node scripts/update-fundsquare.js
-        env:
-          NODE_ENV: production
         continue-on-error: true
 
       - name: Commit and push if changed
@@ -43,7 +38,7 @@ jobs:
           git pull --rebase origin main || true
           git add -A
           if git diff --staged --quiet; then
-            echo "No hay cambios para commitear"
+            echo "No hay cambios"
           else
             git commit -m "Actualizar datos Fundsquare $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
             git push || (git pull --rebase origin main && git push)
@@ -71,10 +66,7 @@ jobs:
         run: git pull origin main
 
       - name: Update from Financial Times
-        id: ft_update
         run: node scripts/update-ft.js
-        env:
-          NODE_ENV: production
         continue-on-error: true
 
       - name: Commit and push if changed
@@ -84,9 +76,9 @@ jobs:
           git pull --rebase origin main || true
           git add -A
           if git diff --staged --quiet; then
-            echo "No hay cambios para commitear"
+            echo "No hay cambios"
           else
-            git commit -m "Actualizar datos Financial Times $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+            git commit -m "Actualizar datos FT $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
             git push || (git pull --rebase origin main && git push)
           fi
 
@@ -98,54 +90,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: main
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Pull latest changes
-        run: |
-          git config --local user.name 'github-actions[bot]'
-          git config --local user.email 'github-actions[bot]@users.noreply.github.com'
-          git pull origin main
-
-      - name: Create data directories if needed
-        run: |
-          mkdir -p data
-          mkdir -p json
-          for isin in LU0563745743 LU0524465548 LU1598720172 LU1372006947 LU1598719752 LU0223332320 LU1832174962; do
-            mkdir -p "data/${isin}"
-          done
-
-      - name: Generate JSON files
-        run: node scripts/generate-json.js
-
-      - name: Commit and push JSON
-        run: |
-          git pull --rebase origin main || true
-          git add -A
-          if git diff --staged --quiet; then
-            echo "No hay cambios para commitear"
-          else
-            git commit -m "Generar exports JSON $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
-            git push || (git pull --rebase origin main && git push)
-          fi
-
-  health-check:
-    needs: [generate-json]
-    if: always()
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          ref: main
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
@@ -159,8 +103,39 @@ jobs:
       - name: Pull latest changes
         run: git pull origin main
 
-      - name: Create data directory if needed
-        run: mkdir -p data
+      - name: Generate JSON files
+        run: node scripts/generate-json.js
+
+      - name: Commit and push JSON
+        run: |
+          git config --local user.name 'github-actions[bot]'
+          git config --local user.email 'github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git diff --staged --quiet; then
+            echo "No hay cambios"
+          else
+            git commit -m "Generar JSON $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+            git push || (git pull --rebase origin main && git push)
+          fi
+
+  health-check:
+    needs: [generate-json]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Pull latest changes
+        run: git pull origin main
 
       - name: Check health status
         run: node scripts/health-check.js
@@ -169,10 +144,8 @@ jobs:
       - name: Fail if data is stale
         run: |
           if [ -f data/health_alert_needed.flag ]; then
-            echo "❌ CRÍTICO: Los datos llevan más de 20 horas sin actualizarse"
-            echo "La última actualización exitosa fue hace demasiado tiempo"
-            echo "Revisa las ejecuciones anteriores del workflow para ver errores"
+            echo "❌ Datos obsoletos (>20h)"
             exit 1
           else
-            echo "✅ Verificación de salud completada correctamente"
+            echo "✅ Salud OK"
           fi
