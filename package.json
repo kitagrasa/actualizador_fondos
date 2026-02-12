@@ -10,7 +10,8 @@
     "health-check": "node scripts/health-check.js"
   },
   "dependencies": {
-    "node-fetch": "^3.3.2"
+    "node-fetch": "^3.3.2",
+    "striptags": "^3.2.0"
   },
   "engines": {
     "node": ">=20.0.0"
