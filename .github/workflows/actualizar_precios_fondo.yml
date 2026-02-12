@@ -1,0 +1,127 @@
+Nombre: actualizar_precios_fondo
+
+on:
+  schedule:
+    # Fundsquare: cada 19 minutos
+    - cron: '0,19,38,57 * * * *'
+    # Financial Times: cada hora en minuto 0
+    - cron: '0 * * * *'
+  workflow_dispatch: # Permite ejecución manual
+
+permissions:
+  contents: write
+
+jobs:
+  update-fundsquare:
+    if: github.event.schedule == '0,19,38,57 * * * *' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Update from Fundsquare
+        id: fundsquare_update
+        run: node scripts/update-fundsquare.js
+        env:
+          NODE_ENV: production
+
+      - name: Commit and push if changed
+        run: |
+          git config --global user.name 'GitHub Actions Bot'
+          git config --global user.email 'actions@github.com'
+          git add data/ json/
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update Fundsquare data $(date -u +'%Y-%m-%d %H:%M:%S UTC')" && git push)
+
+  update-ft:
+    if: github.event.schedule == '0 * * * *' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Update from Financial Times
+        id: ft_update
+        run: node scripts/update-ft.js
+        env:
+          NODE_ENV: production
+
+      - name: Commit and push if changed
+        run: |
+          git config --global user.name 'GitHub Actions Bot'
+          git config --global user.email 'actions@github.com'
+          git add data/ json/
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update Financial Times data $(date -u +'%Y-%m-%d %H:%M:%S UTC')" && git push)
+
+  generate-json:
+    needs: [update-fundsquare, update-ft]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Generate JSON files
+        run: node scripts/generate-json.js
+
+      - name: Commit and push JSON
+        run: |
+          git config --global user.name 'GitHub Actions Bot'
+          git config --global user.email 'actions@github.com'
+          git add json/
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Generate JSON exports $(date -u +'%Y-%m-%d %H:%M:%S UTC')" && git push)
+
+  health-check:
+    needs: [generate-json]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Check health status
+        run: node scripts/health-check.js
+
+      - name: Fail if data is stale
+        run: |
+          if [ -f data/health_alert_needed.flag ]; then
+            echo "❌ CRITICAL: Data is stale for more than 20 hours"
+            echo "Last successful update was too long ago"
+            echo "Check previous workflow runs for errors"
+            exit 1
+          else
+            echo "✅ Health check passed"
+          fi
